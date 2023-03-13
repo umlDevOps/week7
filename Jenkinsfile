@@ -43,7 +43,7 @@ podTemplate(yaml: '''
         container('gradle') {
           stage('Build a gradle project') {
             sh '''
-            cd /home/jenkins/agent/workspace/week7/Chapter08/sample1
+            cd Chapter08/sample1
             chmod +x gradlew
             ./gradlew build
             '''
@@ -105,7 +105,7 @@ podTemplate(yaml: '''
         }
       }
     }
-
+/*
   if (env.BRANCH_NAME == "feature") {
       echo "I am the ${env.BRANCH_NAME} branch"
       stage('Build a gradle project') {
@@ -137,7 +137,7 @@ podTemplate(yaml: '''
                         reportFiles: 'index.html',
                         reportName: "JaCoCo Report"
                     ])                       
-                }*/
+                }*//*
 
       stage("jacoco checkstyle") {
                     try {
@@ -176,7 +176,7 @@ podTemplate(yaml: '''
       }
     }
   }
-
+*/
   if (env.BRANCH_NAME == "playground") {
       echo "I am the ${env.BRANCH_NAME} branch"
       stage('Build a gradle project') {
