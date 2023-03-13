@@ -46,6 +46,7 @@ podTemplate(yaml: '''
             cd Chapter08/sample1
             chmod +x gradlew
             ./gradlew build
+            mv ./build/libs/calculator-1.0-SNAPSHOT.jar /mnt
             '''
           }
         }
@@ -53,7 +54,7 @@ podTemplate(yaml: '''
       stage("Code coverage") {
                     try {
                         sh '''
-        	            pwd
+        	            
                		    cd Chapter08/sample1
                 	    ./gradlew jacocoTestCoverageVerification
                         ./gradlew jacocoTestReport
@@ -72,7 +73,7 @@ podTemplate(yaml: '''
       stage("jacoco checkstyle") {
                     try {
                         sh '''
-                        pwd
+                        
                		    cd Chapter08/sample1
                         ./gradlew checkstyleMain
                         '''
@@ -87,9 +88,7 @@ podTemplate(yaml: '''
                     ])
                 
                 }
-      sh '''
-      mv ./build/libs/calculator-1.0-SNAPSHOT.jar /mnt
-      '''
+      
     }
 
     stage('Build Java Image') {
