@@ -43,7 +43,7 @@ podTemplate(yaml: '''
         container('gradle') {
           stage('Build a gradle project') {
             sh '''
-            cd Chapter08/sample1
+            cd /home/jenkins/agent/workspace/week7/Chapter08/sample1
             chmod +x gradlew
             ./gradlew build
             '''
@@ -113,7 +113,7 @@ podTemplate(yaml: '''
         container('gradle') {
           stage('Build a gradle project') {
             sh '''
-            cd Chapter08/sample1
+            cd /home/jenkins/agent/workspace/week7/Chapter08/sample1
             chmod +x gradlew
             ./gradlew build
             '''
@@ -184,6 +184,7 @@ podTemplate(yaml: '''
         container('gradle') {
           stage('Build a gradle project') {
             sh '''
+            pwd
             cd Chapter08/sample1
             chmod +x gradlew
             ./gradlew build
