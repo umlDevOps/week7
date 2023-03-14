@@ -46,7 +46,7 @@ podTemplate(yaml: '''
       container('gradle') {
         if (env.BRANCH_NAME == "main"){
           echo "I am the ${BRANCH_NAME} branch"
-          git branch: "${BRANCH_NAME}", url:'https://github.com/umlDevOps/week7.git'
+          /*git branch: "${BRANCH_NAME}", url:'https://github.com/umlDevOps/week7.git'
         
         stage('Build a gradle project') {
           sh '''
@@ -111,7 +111,7 @@ podTemplate(yaml: '''
                     }
                 }
               }
-            }
+            }*/
             if (env.BRANCH_NAME == "feature"){
               echo "I am the ${BRANCH_NAME} branch"
               
