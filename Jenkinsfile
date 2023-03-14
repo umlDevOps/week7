@@ -35,92 +35,24 @@ podTemplate(yaml: '''
             - key: .dockerconfigjson
               path: config.json
 ''') {
-  node(POD_LABEL) {
-    if (env.BRANCH_NAME == "main") {
-      echo "I am the ${env.BRANCH_NAME} branch"
-      stage('Build a gradle project') {
-        git branch: 'main', url: 'https://github.com/umlDevOps/week7.git'
-        container('gradle') {
-          stage('Build a gradle project') {
-            sh '''
-            cd Chapter08/sample1
-            chmod +x gradlew
-            ./gradlew build
-            
-            '''
-          }
-        }
-      }
-      stage("Code coverage") {
-                    try {
-                        sh '''
-        	            
-               		    cd Chapter08/sample1
-                	    ./gradlew jacocoTestCoverageVerification
-                        ./gradlew jacocoTestReport
-                        '''
-                    } catch (Exception E) {
-                        echo 'Failure detected'
-                    }
-
-                    publishHTML (target: [
-                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
-                        reportFiles: 'index.html',
-                        reportName: "JaCoCo Report"
-                    ])                       
-                }
-
-      stage("jacoco checkstyle") {
-                    try {
-                        sh '''
-                        
-               		    cd Chapter08/sample1
-                        ./gradlew checkstyleMain
-                        '''
-                    } catch (Exception E) {
-                        echo "Failure detected"
-                    }
-
-                    publishHTML (target: [
-                        reportDir: 'Chapter08/sample1/build/reports/checkstyle/',
-                        reportFiles: 'main.html',
-                        reportName: 'jacoco checkstyle Report'
-                    ])
-                
-                }
+    node(POD_LABEL) {
+        stage('Run pipeline against a gradle project') {
+           container('gradle') {
+                stage('Build a gradle project') {
+                    // from the git plugin
+                    // https://www.jenkins.io/doc/pipeline/steps/git/
+                    git 'https://github.com/umlDevOps/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+                    sh '''
+                    cd Chapter08/sample1
+                    chmod +x gradlew
+                    ./gradlew build
       
-    }
-
-    stage('Build Java Image') {
-      container('kaniko') {
-        stage('Build a gradle project') {
-          sh '''
-          echo 'FROM openjdk:8-jre' > Dockerfile
-          echo 'COPY ./calculator-1.0-SNAPSHOT.jar app.jar' >> Dockerfile
-          echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
-          mv /mnt/calculator-1.0-SNAPSHOT.jar .
-          /kaniko/executor --context `pwd` --destination umldevops23/calculator-kaniko:1.0
-          '''
-        }
-      }
-    }
-  }
-/*
-  if (env.BRANCH_NAME == "feature") {
-      echo "I am the ${env.BRANCH_NAME} branch"
-      stage('Build a gradle project') {
-        git branch: 'main', url: 'https://github.com/umlDevOps/week7.git'
-        container('gradle') {
-          stage('Build a gradle project') {
-            sh '''
-            cd /home/jenkins/agent/workspace/week7/Chapter08/sample1
-            chmod +x gradlew
-            ./gradlew build
-            '''
-          }
-        }
-      }
-      /*stage("Code coverage") {
+                    '''
+                }
+            
+                stage("Code coverage") {
+                  if (env.BRANCH_NAME=="main"){
+                    echo "I am the ${env.BRANCH_NAME} branch"
                     try {
                         sh '''
         	            pwd
@@ -132,14 +64,19 @@ podTemplate(yaml: '''
                         echo 'Failure detected'
                     }
 
+                    // from the HTML publisher plugin
+                    // https://www.jenkins.io/doc/pipeline/steps/htmlpublisher/
                     publishHTML (target: [
                         reportDir: 'Chapter08/sample1/build/reports/tests/test',
                         reportFiles: 'index.html',
                         reportName: "JaCoCo Report"
                     ])                       
-                }*//*
+                  }
+                }
 
-      stage("jacoco checkstyle") {
+                stage("jacoco checkstyle") {
+                  if (env.BRANCH_NAME=="main" || env.BRANCH_NAME=="feature"){
+                    echo "I am the ${env.BRANCH_NAME} branch"
                     try {
                         sh '''
                         pwd
@@ -155,43 +92,11 @@ podTemplate(yaml: '''
                         reportFiles: 'main.html',
                         reportName: 'jacoco checkstyle Report'
                     ])
-                
+                  }
                 }
-      sh '''
-      mv ./build/libs/calculator-feature-0.1-SNAPSHOT.jar /mnt
-      '''
-    }
-
-    stage('Build Java Image') {
-      container('kaniko') {
-        stage('Build a gradle project') {
-          sh '''
-          echo 'FROM openjdk:8-jre' > Dockerfile
-          echo 'COPY ./calculator-feature-0.1-SNAPSHOT.jar app.jar' >> Dockerfile
-          echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
-          mv /mnt/calculator-0.1-SNAPSHOT.jar .
-          /kaniko/executor --context `pwd` --destination umldevops23/calculator-feature-kaniko:0.1
-          '''
+                
+           }
         }
-      }
-    }
-  }
-*/
-  if (env.BRANCH_NAME == "playground") {
-      echo "I am the ${env.BRANCH_NAME} branch"
-      stage('Build a gradle project') {
-        git branch: 'main', url: 'https://github.com/umlDevOps/week7.git'
-        container('gradle') {
-          stage('Build a gradle project') {
-            sh '''
-            pwd
-            cd Chapter08/sample1
-            chmod +x gradlew
-            ./gradlew build
-            '''
-          }
-        }
-      }
     }
 
 }
