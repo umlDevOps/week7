@@ -161,9 +161,9 @@ podTemplate(yaml: '''
               }
             }
             
-            //if (env.BRANCH_NAME == "playground"){
-              //echo "I am the ${BRANCH_NAME} branch"
-            //}
+            if (env.BRANCH_NAME == "playground"){
+              echo "I am the ${BRANCH_NAME} branch"
+            }
           }
         }
       }
