@@ -88,13 +88,13 @@ podTemplate(yaml: '''
                     } catch (Exception E) {
                         echo "Failure detected"
                     }
-/*
+
                     publishHTML (target: [
                         reportDir: 'Chapter08/sample1/build/reports/checkstyle/',
                         reportFiles: 'main.html',
                         reportName: 'jacoco checkstyle Report'
                     ])
-                */
+                
                 }
            
            
@@ -114,8 +114,7 @@ podTemplate(yaml: '''
             }
             if (env.BRANCH_NAME == "feature"){
               echo "I am the ${BRANCH_NAME} branch"
-              
-          git branch: 'main', url:'https://github.com/umlDevOps/week7.git'
+              git branch: 'main', url:'https://github.com/umlDevOps/week7.git'
         
         stage('Build a gradle project') {
           sh '''
@@ -136,13 +135,13 @@ podTemplate(yaml: '''
                     } catch (Exception E) {
                         echo "Failure detected"
                     }
-
+/*
                     publishHTML (target: [
                         reportDir: 'Chapter08/sample1/build/reports/checkstyle/',
                         reportFiles: 'main.html',
                         reportName: 'jacoco checkstyle Report'
                     ])
-                
+                */
                 }
            
            
