@@ -42,14 +42,14 @@ podTemplate(yaml: '''
                 stage('Build a gradle project') {
                     // from the git plugin
                     // https://www.jenkins.io/doc/pipeline/steps/git/
-                   git 'https://github.com/umldevops/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+                   //git branch: 'main', url:'https://github.com/umlDevOps/week7.git'
       container('gradle') {
         if (env.BRANCH_NAME == "main"){
           echo "I am the ${BRANCH_NAME} branch"
+          git branch: "${BRANCH_NAME}", url:'https://github.com/umlDevOps/week7.git'
         
         stage('Build a gradle project') {
           sh '''
-          mkdir /home/jenkins/agent/workspace/week7-1/Chapter08/sample1
           cd /home/jenkins/agent/workspace/week7-1/Chapter08/sample1
           chmod +x gradlew
           ./gradlew build
