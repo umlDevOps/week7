@@ -35,34 +35,68 @@ podTemplate(yaml: '''
             - key: .dockerconfigjson
               path: config.json
 ''') {
-  node(POD_LABEL) {
-    stage('Build a gradle project') {
-      git 'https://github.com/dlambrig/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
-      container('gradle') {
-        stage('Build a gradle project') {
-          sh '''
-          cd /home/jenkins/agent/workspace/week7/Chapter08/sample1
-          chmod +x gradlew
-          ./gradlew build
-          mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
-          '''
+    node(POD_LABEL) {
+        stage('Run pipeline against a gradle project') {
+           container('gradle') {
+                stage('Build a gradle project') {
+                    // from the git plugin
+                    // https://www.jenkins.io/doc/pipeline/steps/git/
+                    git 'https://github.com/umlDevOps/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition.git'
+                    sh '''
+                    cd Chapter08/sample1
+                    chmod +x gradlew
+                    ./gradlew build
+      
+                    '''
+                }
+            
+                stage("Code coverage") {
+                  if (env.BRANCH_NAME=="main"){
+                    echo "I am the ${env.BRANCH_NAME} branch"
+                    try {
+                        sh '''
+        	            pwd
+               		    cd Chapter08/sample1
+                	    ./gradlew jacocoTestCoverageVerification
+                        ./gradlew jacocoTestReport
+                        '''
+                    } catch (Exception E) {
+                        echo 'Failure detected'
+                    }
+
+                    // from the HTML publisher plugin
+                    // https://www.jenkins.io/doc/pipeline/steps/htmlpublisher/
+                    publishHTML (target: [
+                        reportDir: 'Chapter08/sample1/build/reports/tests/test',
+                        reportFiles: 'index.html',
+                        reportName: "JaCoCo Report"
+                    ])                       
+                  }
+                }
+
+                stage("jacoco checkstyle") {
+                  if (env.BRANCH_NAME=="main" || env.BRANCH_NAME=="feature"){
+                    echo "I am the ${env.BRANCH_NAME} branch"
+                    try {
+                        sh '''
+                        pwd
+               		    cd Chapter08/sample1
+                        ./gradlew checkstyleMain
+                        '''
+                    } catch (Exception E) {
+                        echo "Failure detected"
+                    }
+
+                    publishHTML (target: [
+                        reportDir: 'Chapter08/sample1/build/reports/checkstyle/',
+                        reportFiles: 'main.html',
+                        reportName: 'jacoco checkstyle Report'
+                    ])
+                  }
+                }
+                
+           }
         }
-      }
     }
 
-    stage('Build Java Image') {
-      container('kaniko') {
-        stage('Build a gradle project') {
-          sh '''
-          echo 'FROM openjdk:8-jre' > Dockerfile
-          echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
-          echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
-          mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
-          /kaniko/executor --context `pwd` --destination umldevops23/hello-kaniko:1.0
-          '''
-        }
-      }
-    }
-
-  }
 }
