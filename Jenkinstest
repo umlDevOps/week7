@@ -47,7 +47,7 @@ podTemplate(yaml: '''
         if (env.BRANCH_NAME == "main"){
           echo "I am the ${BRANCH_NAME} branch"
           git branch: "${BRANCH_NAME}", url:'https://github.com/umlDevOps/week7.git'
-        
+        /*
         stage('Build a gradle project') {
           sh '''
           cd /home/jenkins/agent/workspace/week7-1_main/Chapter08/sample1
@@ -110,11 +110,12 @@ podTemplate(yaml: '''
                     '''
                     }
                 }
-              }
+              }*/
             }
             if (env.BRANCH_NAME == "feature"){
               echo "I am the ${BRANCH_NAME} branch"
-              /*git branch: 'main', url:'https://github.com/umlDevOps/week7.git'
+            /*  
+          git branch: "${BRANCH_NAME}", url:'https://github.com/umlDevOps/week7.git'
         
         stage('Build a gradle project') {
           sh '''
